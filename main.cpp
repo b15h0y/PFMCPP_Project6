@@ -58,7 +58,7 @@ Purpose:  This project will show you the difference between member functions and
 */
 #include <iostream>
 #include <string>
-#include <assert.h>
+
 struct T
 {
     T(int v, const char* s) :  //1
@@ -75,10 +75,11 @@ struct Comparison                                //4
 {
     T* compare(T* a, T* b) //5
     {
-        assert(a != nullptr);
-        assert(b != nullptr);
-        if( a->value < b->value ) return a;
-        if( a->value > b->value ) return b;
+         if (a != nullptr && b != nullptr)
+        {
+            if( a->value < b->value ) return a;
+            if( a->value > b->value ) return b;
+        }
         return nullptr;
     }
 };
@@ -88,13 +89,16 @@ struct U
     float f1 { 0 }, f2 { 0 };
     float equalizeAndMultiply(float* newValue)      //12
     {
-        assert(newValue != nullptr);
-        this->f1 = *newValue;
-        while( std::abs(this->f2 - this->f1) > 0.001f )
+        if (newValue != nullptr)
         {
-            this->f2 += 0.1f;
+            this->f1 = *newValue;
+            while( std::abs(this->f2 - this->f1) > 0.001f )
+            {
+                this->f2 += 0.1f;
+            }
+            return this->f1 * this->f2;
         }
-        return this->f1 * this->f2;
+       return -1;
     }
 };
 
@@ -102,20 +106,22 @@ struct S
 {
     static float equalizeAndMultiply(U* that, float* newValue)        //10
     {
-        assert(that != nullptr);
-        assert(newValue != nullptr);
-        std::cout << "U's f1 value: " << that->f1 << std::endl;
-        that->f1 = *newValue;
-        std::cout << "U's f1 updated value: " << that->f1 << std::endl;
-        while( std::abs(that->f2 - that->f1) > 0.001f )
+        if(that != nullptr && newValue != nullptr)
         {
+            std::cout << "U's f1 value: " << that->f1 << std::endl;
+            that->f1 = *newValue;
+            std::cout << "U's f1 updated value: " << that->f1 << std::endl;
+            while( std::abs(that->f2 - that->f1) > 0.001f )
+            {
             /*
              write something that makes the distance between that->f2 and that->f1 get smaller
              */
-            that->f2 += 0.1f;
+                that->f2 += 0.1f;
+            }
+            std::cout << "U's f2 updated value: " << that->f2 << std::endl;
+            return that->f2 * that->f1;
         }
-        std::cout << "U's f2 updated value: " << that->f2 << std::endl;
-        return that->f2 * that->f1;
+        return -1;
     }
 };
         
