@@ -52,19 +52,31 @@ Purpose:  This project will show you the difference between member functions and
  After you finish, click the [run] button.  Clear up any errors or warnings as best you can.
  */
 
+/* 
+** I used assertion that would interrupt a function from executing if a pointer is null
+** however an if statment would work as well and a garbage return value can be used as a return value
+*/
 #include <iostream>
 #include <string>
+#include <assert.h>
 struct T
 {
-    T(<#type name#> v, const char* <#variable name#>)   //1
-    //2
-    //3
+    T(int v, const char* s) :  //1
+    value(v),
+    name(s)
+    {
+        
+    }
+    int value;//2
+    std::string name;//3
 };
 
-struct <#structName1#>                                //4
+struct Comparison                                //4
 {
-    <#type name#> compare(<#type name#> a, <#type name#> b) //5
+    T* compare(T* a, T* b) //5
     {
+        assert(a != nullptr);
+        assert(b != nullptr);
         if( a->value < b->value ) return a;
         if( a->value > b->value ) return b;
         return nullptr;
@@ -73,29 +85,37 @@ struct <#structName1#>                                //4
 
 struct U
 {
-    float <#name1#> { 0 }, <#name2#> { 0 };
-    <#returnType#> <#memberFunction#>(<#type name#>* <#updatedValue#>)      //12
+    float f1 { 0 }, f2 { 0 };
+    float equalizeAndMultiply(float* newValue)      //12
     {
-        
+        assert(newValue != nullptr);
+        this->f1 = *newValue;
+        while( std::abs(this->f2 - this->f1) > 0.001f )
+        {
+            this->f2 += 0.1f;
+        }
+        return this->f1 * this->f2;
     }
 };
 
-struct <#structname2#>
+struct S
 {
-    static <#returntype#> <#staticFunctionA#>(U* that, <#type name#>* <#updatedValue#> )        //10
+    static float equalizeAndMultiply(U* that, float* newValue)        //10
     {
-        std::cout << "U's <#name1#> value: " << that-><#name1#> << std::endl;
-        that-><#name1#> = <#updatedValue#>;
-        std::cout << "U's <#name1#> updated value: " << that-><#name1#> << std::endl;
-        while( std::abs(that-><#name2#> - that-><#name1#>) > 0.001f )
+        assert(that != nullptr);
+        assert(newValue != nullptr);
+        std::cout << "U's f1 value: " << that->f1 << std::endl;
+        that->f1 = *newValue;
+        std::cout << "U's f1 updated value: " << that->f1 << std::endl;
+        while( std::abs(that->f2 - that->f1) > 0.001f )
         {
             /*
-             write something that makes the distance between that-><#name2#> and that-><#name1#> get smaller
+             write something that makes the distance between that->f2 and that->f1 get smaller
              */
-            that-><#name2#> += ;
+            that->f2 += 0.1f;
         }
-        std::cout << "U's <#name2#> updated value: " << that-><#name2#> << std::endl;
-        return that-><#name2#> * that-><#name1#>;
+        std::cout << "U's f2 updated value: " << that->f2 << std::endl;
+        return that->f2 * that->f1;
     }
 };
         
@@ -115,25 +135,24 @@ struct <#structname2#>
 
 int main()
 {
-    T <#name1#>( , );                                             //6
-    T <#name2#>( , );                                             //6
+    T t1(10, "T1!");                                             //6
+    T t2(5, "T2!");                                             //6
     
-    <#structName1#> f;                                            //7
-    auto* smaller = f.compare( , );                              //8
-    std::cout << "the smaller one is << " << smaller->name << std::endl; //9
-    
-    U <#name3#>;
-    float updatedValue = 5.f;
-    std::cout << "[static func] <#name3#>'s multiplied values: " << <#structname2#>::<#staticFunctionA#>( , ) << std::endl;                  //11
-    
-    U <#name4#>;
-    std::cout << "[member func] <#name4#>'s multiplied values: " << <#name4#>.<#memberFunction#>( &updatedValue ) << std::endl;
-}
+    Comparison f;                                            //7
+    auto* smaller = f.compare(&t1, &t2);                              //8
+    if (smaller != nullptr)
+    {
+        std::cout << "the smaller one is << " << smaller->name << std::endl; //9
+    }
+    else
+    {
+        std::cout << "both values are equal! recieved " <<  t1.value << " and " << t2.value << std::endl; //9
+    }
 
-        
-        
-        
-        
-        
-        
-        
+    U u1;
+    float updatedValue = 5.f;
+    std::cout << "[static func] u1's multiplied values: " << S::equalizeAndMultiply(&u1 , &updatedValue) << std::endl;                  //11
+    
+    U u2;
+    std::cout << "[member func] u2's multiplied values: " << u2.equalizeAndMultiply(&updatedValue) << std::endl;
+}
